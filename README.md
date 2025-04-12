@@ -36,35 +36,14 @@ pnpm run build
 
 ### 提供されるツール
 
-#### convert_markdown_to_notion
-
-ObsidianのマークダウンをNotion互換形式に変換します。
-
-パラメータ:
-- `markdown`: 変換するマークダウンテキスト
-- `titleProperty`: タイトルとして使用するプロパティ名（オプション、デフォルト：`title`）
-
-#### build_notion_property
-
-Notion APIに送信するためのプロパティオブジェクトを構築します。
-
-パラメータ:
-- `propertyName`: プロパティ名
-- `propertyType`: プロパティタイプ（title, rich_text, date, numberなど）
-- `propertyValue`: プロパティの値
-
 #### prepare_for_notion_post
 
 マークダウンテキストを変換して、Notion APIのpost_pageに送信できる形式に整形します。
 
-パラメータ:
-- `markdown`: 変換するマークダウンテキスト
-- `pageParentId`: 親ページのID
-- `properties`: ページのプロパティ（オプション）
 
 ## サポートされているマークダウン要素
 
-- 見出し (h1-h6)
+- 見出し (h1-h3) ※h4以下の見出しはh3に変換されます
 - 段落
 - リスト（順序付き・順序なし）
 - コードブロック
