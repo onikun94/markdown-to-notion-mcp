@@ -7,62 +7,6 @@ import { buildPropertyObject } from './utils.js';
 
 // MCPサーバーにツールを登録する関数
 export function registerTools(server: McpServer): void {
-  // Obsidianマークダウンをノーション互換形式に変換するツール
-  server.tool(
-    "convert_markdown_to_notion",
-    "ObsidianのマークダウンをNotion APIと互換性のある形式に変換する",
-    { 
-      markdown: z.string().describe("変換するマークダウンテキスト"),
-      titleProperty: z.string().optional().describe("タイトルとして使用するプロパティ名")
-    },
-    ({ markdown, titleProperty = "title" }) => {
-      // フロントマターを解析
-      const { data: frontMatter, content } = matter(markdown);
-      
-      // マークダウンのパース
-      const tokens = marked.lexer(content);
-      
-      // Notionのブロック形式に変換
-      const notionBlocks = convertToNotionBlocks(tokens);
-      
-      // 最初の見出しや段落をタイトルとして使用
-      let title = "無題のページ";
-      // フロントマターにタイトルがあればそれを使用
-      if (frontMatter && frontMatter.title) {
-        title = frontMatter.title;
-      } else {
-        // フロントマターになければコンテンツから探す
-        for (const token of tokens) {
-          if ((token as any).type === 'heading' || (token as any).type === 'paragraph') {
-            title = (token as any).text;
-            break;
-          }
-        }
-      }
-      
-      // フロントマターのプロパティを追加
-      const properties = {
-        [titleProperty]: title,
-        ...frontMatter
-      };
-      
-      const result = {
-        title,
-        blocks: notionBlocks,
-        properties
-      };
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
-      };
-    }
-  );
-
   // マークダウンテキストを更新してNotion post_pageに送信するツール
   server.tool(
     "prepare_for_notion_post",
