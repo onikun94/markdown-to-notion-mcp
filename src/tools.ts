@@ -46,78 +46,20 @@ export function registerTools(server: McpServer): void {
       
       // プロパティオブジェクトの構築
       const notionProperties: Record<string, any> = {};
-      // フロントマターのプロパティを変換
-      for (const [key, value] of Object.entries(frontMatter)) {
-        // nullの場合はスキップ
-        if (value === null) continue;
-        
-        // IDプロパティの場合はスキップ
-        if (key.toLowerCase() === 'id') continue;
-        
-        // プロパティタイプを推測（簡易的な実装）
-        let propertyType = typeof value === 'string' ? 'rich_text' : 
-                          typeof value === 'number' ? 'number' :
-                          typeof value === 'boolean' ? 'checkbox' :
-                          Array.isArray(value) ? 'multi_select' : 'rich_text';
-                          
-        // タイトルの場合は特別扱い
-        if (key === 'title') propertyType = 'title';
-        
-        // tagsの場合は特別扱い - 常にmulti_selectとして処理
-        if (key.toLowerCase() === 'tags') {
-          propertyType = 'multi_select';
-          // 文字列の場合はカンマまたはスペース区切りで配列に変換
-          if (typeof value === 'string') {
-            const tagArray = value.includes(',') 
-              ? value.split(',').map(tag => tag.trim())
-              : value.split(/\s+/);
-            notionProperties[key] = buildPropertyObject(key, propertyType, { [key]: tagArray });
-            continue;
-          }
-        }
-        
-        notionProperties[key] = buildPropertyObject(key, propertyType, { [key]: value });
-      }
       
-      // ユーザー指定のプロパティを追加（優先）
-      for (const [key, prop] of Object.entries(properties)) {
-        // nullの場合はスキップ
-        if ((prop as any).value === null) continue;
-        
-        // IDプロパティの場合はスキップ
-        if (key.toLowerCase() === 'id') continue;
-        
-        // tagsプロパティの場合は特別処理
-        if (key.toLowerCase() === 'tags' && (prop as any).type === 'multi_select') {
-          // multi_selectの形式を正規化する
-          const value = (prop as any).value;
-          if (Array.isArray(value)) {
-            const normalizedTags = value.map(tag => {
-              // タグが{name:{name:"タグ名"}}の形式の場合、{name:"タグ名"}に変換
-              if (tag && typeof tag === 'object' && tag.name && typeof tag.name === 'object' && tag.name.name) {
-                return {name: tag.name.name};
-              }
-              // タグが{name:"タグ名"}の形式ならそのまま
-              else if (tag && typeof tag === 'object' && tag.name && typeof tag.name === 'string') {
-                return tag;
-              }
-              // その他の場合は標準形式に変換
-              return {name: tag};
-            });
-            notionProperties[key] = {
-              multi_select: normalizedTags
-            };
-          } else {
-            notionProperties[key] = buildPropertyObject(key, (prop as any).type, { [key]: (prop as any).value });
-          }
-        } else {
-          notionProperties[key] = buildPropertyObject(key, (prop as any).type, { [key]: (prop as any).value });
-        }
-      }
+      // フロントマターのプロパティは無視し、タイトルのみ設定
+      notionProperties["title"] = buildPropertyObject("title", "title", { "title": title });
       
-      // タイトルプロパティがなければ追加
-      if (!notionProperties.title) {
-        notionProperties.title = buildPropertyObject("title", "title", { title });
+      // ユーザー指定のプロパティがある場合のみ追加（オプション）
+      for (const [key, propertyObj] of Object.entries(properties)) {
+        if (typeof propertyObj !== 'object' || propertyObj === null) continue;
+        
+        const type = (propertyObj as any).type;
+        const value = (propertyObj as any).value;
+        
+        if (!type || value === undefined) continue;
+        
+        notionProperties[key] = buildPropertyObject(key, type, { [key]: value });
       }
       
       // Notion APIのpost_page用のペイロード形式
