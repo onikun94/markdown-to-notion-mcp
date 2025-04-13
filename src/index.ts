@@ -10,7 +10,7 @@ dotenv.config();
 // MCPサーバーを初期化
 const server = new McpServer({
   name: "notion-markdown-mcp",
-  version: "1.0.0",
+  version: "0.2.0",
 });
 
 // ツールを登録
