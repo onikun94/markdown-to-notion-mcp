@@ -51,29 +51,21 @@ pnpm run build
 - 水平線
 - テーブル
 
-## サンプルコード
+## 推奨プロンプト
 
-```javascript
-// マークダウンテキストをNotionに投稿
-const markdown = `# タイトル
+```txt
+こちらを0123456abcのデータベースに Notion用に変換してその変換したデータを用いてNotionにPOSTして。  
+Notionにポストするときparentで指定するidはpage_idではなくdatabase_idを用いて。  
+タイトルは参照しているファイル名を入れて。
+Notion に変換する際はヌケモレがないようにして。
+```
+このプロンプトには以下の目的があります：
+1. 変換されたデータがNotionに送信される過程で自動的に変更されることを防ぎます
+2. Notion APIの仕様に合わせて適切なIDを指定するよう促します
+3. 本MCPではファイル名を自動取得できないため、タイトルとしてファイル名を使用するよう明示的に指示しています
+4. マークダウンの全要素が正確に変換されるよう指示しています
 
-これは段落です。
+## 免責事項
 
-- リストアイテム1
-- リストアイテム2
-`;
+このMCPはNotionへのPOSTを必ず成功させることを保証するものではありません。Notion APIの仕様変更や制限により、変換されたデータが正しく投稿されない場合があります。
 
-const notionPayload = await mcp_notionMarkdown_prepare_for_notion_post({
-  markdown,
-  pageParentId: "親ページのID",
-  properties: {
-    "タグ": {
-      type: "multi_select",
-      value: ["メモ", "アイデア"]
-    }
-  }
-});
-
-// Notion APIで投稿
-await mcp_notionApi_API_post_page(notionPayload);
-``` 
