@@ -27,7 +27,7 @@ pnpm run build
   "mcpServers": {
     "notionMarkdown": {
       "command": "node",
-      "args": ["/path/to/notion-markdown-mcp/build/index.js"],
+      "args": ["/path/to/notion-markdown-mcp/dist/index.js"],
       "env": {}
     }
   }

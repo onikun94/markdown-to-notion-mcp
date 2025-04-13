@@ -2,18 +2,18 @@
   "name": "notion-markdown-mcp",
   "version": "1.0.0",
   "description": "Model Context Protocol server for converting Obsidian Markdown to Notion compatible format",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "notion-markdown-mcp": "./build/index.js"
+    "notion-markdown-mcp": "./dist/index.js"
   },
   "packageManager": "pnpm@9.12.1",
   "scripts": {
-    "build": "tsc && chmod 755 build/index.js",
+    "build": "tsc && chmod 755 dist/index.js",
     "test": "vitest run"
   },
   "files": [
-    "build"
+    "dist"
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
